@@ -1,3 +1,9 @@
+This project is built using an AI-first approach. The goal is to practice the new form of development as learning.
+
+## Contributors:
+1. Tan Sau Tong
+2. Jason Hew
+
 # 🧩 Design Document: Scalable and Cost-Efficient Third-Party API Integration Layer
 
 ## 1. **Overview**
@@ -279,5 +285,3 @@ Minimize the number of third-party API calls to reduce costs and improve perform
 * Support for Webhooks if third-party services offer updates.
 
 ---
-
-Let me know if you want a **sample .NET architecture**, **Node.js starter**, or **Terraform script** for secret setup.
