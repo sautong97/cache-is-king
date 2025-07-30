@@ -1,6 +1,17 @@
 @Api_HostAddress = http://localhost:5171
 
-GET {{Api_HostAddress}}/weatherforecast/
-Accept: application/json
+### Set location data in Redis
+POST {{Api_HostAddress}}/api/locationcache/set
+Content-Type: application/json
+
+{
+  "AddressHash": "e3b0c44298fc1c149afbf4c8996fb924", // Example SHA256 hash
+  "Address": "123 Main St",
+  "Latitude": 1.234,
+  "Longitude": 5.678
+}
+
+### Get location data from Redis
+GET {{Api_HostAddress}}/api/locationcache/get/e3b0c44298fc1c149afbf4c8996fb924
 
 ###
