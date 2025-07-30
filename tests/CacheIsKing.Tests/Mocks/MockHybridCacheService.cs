@@ -1,67 +1,61 @@
 using CacheIsKing.Core.Interfaces;
-using CacheIsKing.Core.Models;
-using Microsoft.Extensions.Logging;
-using Moq;
 
 namespace CacheIsKing.Tests.Mocks;
 
 /// <summary>
-/// Mock implementation of IHybridCacheService for testing cache behavior
+/// Simple mock implementation of IHybridCacheService for testing cache behavior
 /// </summary>
-public class MockHybridCacheService : Mock<IHybridCacheService>
+public class MockHybridCacheService : IHybridCacheService
 {
     private readonly Dictionary<string, (object Value, DateTime Expiry)> _cache = new();
     private readonly Dictionary<string, int> _accessCount = new();
 
-    public MockHybridCacheService()
+    public async Task<T?> GetAsync<T>(string key, CancellationToken cancellationToken = default) where T : class
     {
-        Setup(x => x.GetAsync<It.IsAnyType>(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-            .Returns<string, CancellationToken>((key, _) =>
+        await Task.Yield(); // Make it properly async
+        
+        IncrementAccessCount(key);
+        
+        if (_cache.TryGetValue(key, out var cached))
+        {
+            if (cached.Expiry > DateTime.UtcNow)
             {
-                IncrementAccessCount(key);
-                
-                if (_cache.TryGetValue(key, out var cached))
-                {
-                    if (cached.Expiry > DateTime.UtcNow)
-                    {
-                        return Task.FromResult((object?)cached.Value);
-                    }
-                    // Expired, remove from cache
-                    _cache.Remove(key);
-                }
-                
-                return Task.FromResult((object?)null);
-            });
+                return cached.Value as T;
+            }
+            // Expired, remove from cache
+            _cache.Remove(key);
+        }
+        
+        return null;
+    }
 
-        Setup(x => x.SetAsync(It.IsAny<object>(), It.IsAny<string>(), It.IsAny<TimeSpan?>(), It.IsAny<CancellationToken>()))
-            .Returns<object, string, TimeSpan?, CancellationToken>((value, key, expiry, _) =>
-            {
-                var expiryTime = DateTime.UtcNow.Add(expiry ?? TimeSpan.FromHours(1));
-                _cache[key] = (value, expiryTime);
-                return Task.CompletedTask;
-            });
+    public async Task SetAsync<T>(string key, T value, TimeSpan? expiry = null, CancellationToken cancellationToken = default) where T : class
+    {
+        await Task.Yield(); // Make it properly async
+        
+        var expiryTime = DateTime.UtcNow.Add(expiry ?? TimeSpan.FromHours(1));
+        _cache[key] = (value!, expiryTime);
+    }
 
-        Setup(x => x.RemoveAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-            .Returns<string, CancellationToken>((key, _) =>
-            {
-                _cache.Remove(key);
-                _accessCount.Remove(key);
-                return Task.CompletedTask;
-            });
+    public async Task RemoveAsync(string key, CancellationToken cancellationToken = default)
+    {
+        await Task.Yield(); // Make it properly async
+        
+        _cache.Remove(key);
+        _accessCount.Remove(key);
+    }
 
-        Setup(x => x.ExistsAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-            .Returns<string, CancellationToken>((key, _) =>
-            {
-                var exists = _cache.ContainsKey(key) && _cache[key].Expiry > DateTime.UtcNow;
-                return Task.FromResult(exists);
-            });
+    public async Task<bool> ExistsAsync(string key, CancellationToken cancellationToken = default)
+    {
+        await Task.Yield(); // Make it properly async
+        
+        return _cache.ContainsKey(key) && _cache[key].Expiry > DateTime.UtcNow;
+    }
 
-        Setup(x => x.GenerateCacheKey(It.IsAny<string>(), It.IsAny<object[]>()))
-            .Returns<string, object[]>((prefix, parameters) =>
-            {
-                var paramString = string.Join("|", parameters.Select(p => p?.ToString() ?? "null"));
-                return $"{prefix}:{paramString.GetHashCode():X}";
-            });
+    public string GenerateCacheKey(string prefix, params object[] parameters)
+    {
+        var paramString = string.Join("|", parameters.Select(p => p?.ToString() ?? "null"));
+        return $"{prefix}:{paramString.GetHashCode():X}";
     }
 
     private void IncrementAccessCount(string key)

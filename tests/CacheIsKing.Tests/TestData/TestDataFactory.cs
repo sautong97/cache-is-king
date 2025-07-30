@@ -15,11 +15,15 @@ public static class TestDataFactory
         return new GeocodeResult
         {
             FormattedAddress = address ?? _faker.Address.FullAddress(),
+            Address = address ?? _faker.Address.FullAddress(),
             Coordinates = coordinates ?? CreateCoordinates(),
             Confidence = _faker.Random.Double(0.5, 1.0),
-            Provider = _faker.PickRandom("TomTom", "HERE", "GoogleMaps"),
-            CacheHit = false,
-            ResponseTimeMs = _faker.Random.Int(10, 500)
+            ProviderName = _faker.PickRandom("TomTom", "HERE", "GoogleMaps"),
+            CountryCode = _faker.Address.CountryCode(),
+            PostalCode = _faker.Address.ZipCode(),
+            City = _faker.Address.City(),
+            State = _faker.Address.State(),
+            ResponseTime = DateTime.UtcNow.AddMilliseconds(-_faker.Random.Int(10, 500))
         };
     }
 
@@ -27,13 +31,14 @@ public static class TestDataFactory
     {
         return new RouteResult
         {
-            From = from ?? CreateCoordinates(),
-            To = to ?? CreateCoordinates(),
+            Origin = from ?? CreateCoordinates(),
+            Destination = to ?? CreateCoordinates(),
             DistanceMeters = _faker.Random.Int(1000, 100000),
-            DurationSeconds = _faker.Random.Int(300, 7200),
-            Provider = _faker.PickRandom("TomTom", "HERE", "GoogleMaps"),
-            CacheHit = false,
-            ResponseTimeMs = _faker.Random.Int(10, 500)
+            Duration = TimeSpan.FromSeconds(_faker.Random.Int(300, 7200)),
+            ProviderName = _faker.PickRandom("TomTom", "HERE", "GoogleMaps"),
+            Instructions = _faker.Lorem.Sentences(3),
+            RoutePoints = new List<Coordinates> { from ?? CreateCoordinates(), to ?? CreateCoordinates() },
+            ResponseTime = DateTime.UtcNow.AddMilliseconds(-_faker.Random.Int(10, 500))
         };
     }
 
