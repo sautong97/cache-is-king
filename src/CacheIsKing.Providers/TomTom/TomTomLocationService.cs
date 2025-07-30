@@ -2,6 +2,7 @@ using CacheIsKing.Core.Interfaces;
 using CacheIsKing.Core.Models;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace CacheIsKing.Providers.TomTom;
 
@@ -152,38 +153,51 @@ public class TomTomLocationService : ILocationProviderService
 // TomTom API response models
 internal class TomTomGeocodeResponse
 {
+    [JsonPropertyName("results")]
     public TomTomResult[] Results { get; set; } = Array.Empty<TomTomResult>();
 }
 
 internal class TomTomResult
 {
+    [JsonPropertyName("position")]
     public TomTomPosition Position { get; set; } = new();
+    [JsonPropertyName("address")]
     public TomTomAddress Address { get; set; } = new();
+    [JsonPropertyName("score")]
     public double Score { get; set; }
 }
 
 internal class TomTomPosition
 {
+    [JsonPropertyName("lat")]
     public double Lat { get; set; }
+    [JsonPropertyName("lon")]
     public double Lon { get; set; }
 }
 
 internal class TomTomAddress
 {
+    [JsonPropertyName("freeFormAddress")]
     public string FreeformAddress { get; set; } = string.Empty;
+    [JsonPropertyName("countryCode")]
     public string CountryCode { get; set; } = string.Empty;
+    [JsonPropertyName("postalCode")]
     public string PostalCode { get; set; } = string.Empty;
+    [JsonPropertyName("municipality")]
     public string Municipality { get; set; } = string.Empty;
+    [JsonPropertyName("countrySubdivision")]
     public string CountrySubdivision { get; set; } = string.Empty;
 }
 
 internal class TomTomRouteResponse
 {
+    [JsonPropertyName("routes")]
     public TomTomRoute[] Routes { get; set; } = Array.Empty<TomTomRoute>();
 }
 
 internal class TomTomRoute
 {
+    [JsonPropertyName("summary")]
     public TomTomSummary Summary { get; set; } = new();
 }
 
