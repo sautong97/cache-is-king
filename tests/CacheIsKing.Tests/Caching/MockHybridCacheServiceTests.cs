@@ -138,16 +138,16 @@ public class MockHybridCacheServiceTests
     }
 
     [Fact]
-    public void ClearCache_ShouldRemoveAllEntries()
+    public async Task ClearCache_ShouldRemoveAllEntries()
     {
         // Arrange
         var cache = new MockHybridCacheService();
         
         // Act
-        cache.SetAsync("key1", new GeocodeResult { ProviderName = "Test1" });
-        cache.SetAsync("key2", new GeocodeResult { ProviderName = "Test2" });
-        cache.GetAsync<GeocodeResult>("key1"); // Generate some access counts
-        
+        await cache.SetAsync("key1", new GeocodeResult { ProviderName = "Test1" });
+        await cache.SetAsync("key2", new GeocodeResult { ProviderName = "Test2" });
+        await cache.GetAsync<GeocodeResult>("key1"); // Generate some access counts
+
         cache.ClearCache();
 
         // Assert
