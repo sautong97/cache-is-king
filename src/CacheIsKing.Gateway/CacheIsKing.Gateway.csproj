@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.7" />
+    <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="9.0.7" />
+    <PackageReference Include="Polly.Extensions.Http" Version="3.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CacheIsKing.Core\CacheIsKing.Core.csproj" />
+    <ProjectReference Include="..\CacheIsKing.Caching\CacheIsKing.Caching.csproj" />
+    <ProjectReference Include="..\CacheIsKing.Providers\CacheIsKing.Providers.csproj" />
+    <ProjectReference Include="..\CacheIsKing.Aggregation\CacheIsKing.Aggregation.csproj" />
+  </ItemGroup>
+
+</Project>

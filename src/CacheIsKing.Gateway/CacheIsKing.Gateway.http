@@ -1,0 +1,6 @@
+@CacheIsKing.Gateway_HostAddress = http://localhost:5148
+
+GET {{CacheIsKing.Gateway_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
